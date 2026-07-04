@@ -40,9 +40,9 @@ class RebalancerTest {
     @Test
     void currentPercentEqualsTargetPercentAcrossPortfolio() {
         List<Position> positions = List.of(
-                new Position("X", 20, 20, 100),
-                new Position("Y", 30, 30, 50),
-                new Position("Z", 50, 50, 200)
+                new Position("A", 20, 20, 100),
+                new Position("B", 30, 30, 50),
+                new Position("C", 50, 50, 200)
         );
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
         for (RebalanceResult r : result) {
@@ -54,10 +54,10 @@ class RebalancerTest {
     //Test 3 One security holding 0% - it should buy
     @Test
     void OneShareHoldingZeroPercent() {
-        List<Position> positions = List.of(new Position("X", 100, 0, 50));
+        List<Position> positions = List.of(new Position("A", 100, 0, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(200000, positions);
-        assertEquals(4000.0, result.get(0).getShares());
-        assertEquals("BUY", result.get(0).getAction());
+        assertEquals(4000.0, TestUtil.findBySymbol(result, "A").getShares());
+        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
     }
 
     //Test 4 : Large total asset value across a mixed over/under/on-target portfolio
@@ -88,4 +88,6 @@ class RebalancerTest {
         assertEquals(0, TestUtil.findBySymbol(result, "E").getShares());
         assertEquals("HOLD", TestUtil.findBySymbol(result, "E").getAction());
     }
+
+
 }
