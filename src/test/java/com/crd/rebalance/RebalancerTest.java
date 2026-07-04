@@ -129,4 +129,14 @@ class RebalancerTest {
         assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
     }
 
+    //Test 10 - very small variance that it round downs to zero
+    @Test
+    void varianceRoundsDownToZeroShares() {
+        List<Position> positions = List.of(new Position("A", 20.0001, 20, 1000));
+        List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+        assertEquals(0.0, TestUtil.findBySymbol(result, "A").getShares());
+        assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
+    }
+
+    //
 }
