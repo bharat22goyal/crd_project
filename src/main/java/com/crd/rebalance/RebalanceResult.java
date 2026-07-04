@@ -14,6 +14,18 @@ public class RebalanceResult {
         this.action = action;
     }
 
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public double getShares() {
+        return shares;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
     @Override
     public String toString() {
         return symbol + ": variance=" + targetVariance + ", shares=" + shares + ", action=" + action;
