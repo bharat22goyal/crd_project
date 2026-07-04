@@ -48,7 +48,9 @@ class RebalancerTest {
                 new Position("B", 30, 30, 50),
                 new Position("C", 50, 50, 200)
         );
+
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+
         for (RebalanceResult r : result) {
             assertEquals(0, r.getShares());
             assertEquals("HOLD", r.getAction());
@@ -60,6 +62,7 @@ class RebalancerTest {
     void OneShareHoldingZeroPercent() {
         List<Position> positions = List.of(new Position("A", 100, 0, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(200000, positions);
+
         assertEquals(4000.0, TestUtil.findBySymbol(result, "A").getShares());
         assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
     }
@@ -98,6 +101,7 @@ class RebalancerTest {
     @ValueSource(doubles = {0, -10})
     void zeroOrNegativeUnitPriceMustBeRejected(double price) {
         List<Position> positions = List.of(new Position("A", 20, 10, price));
+
         assertThrows(IllegalArgumentException.class,
                 () -> Rebalancer.rebalance(100000, positions));
     }
@@ -107,6 +111,7 @@ class RebalancerTest {
     void currentPosition100PercentButTargetIsZero() {
         List<Position> positions = List.of(new Position("A", 0, 100, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+
         assertEquals(-2000.0, TestUtil.findBySymbol(result, "A").getShares());
         assertEquals("SELL", TestUtil.findBySymbol(result, "A").getAction());
     }
@@ -116,6 +121,7 @@ class RebalancerTest {
     void nonRoundUnitPrice() {
         List<Position> positions = List.of(new Position("A", 20, 10, 137.53));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+
         assertEquals(72.71, TestUtil.findBySymbol(result, "A").getShares() , 0.01);
         assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
     }
@@ -125,6 +131,7 @@ class RebalancerTest {
     void zeroTotalAssetAccountNotYetVested() {
         List<Position> positions = List.of(new Position("A", 20, 0, 100));
         List<RebalanceResult> result = Rebalancer.rebalance(0, positions);
+
         assertEquals(0, TestUtil.findBySymbol(result, "A").getShares());
         assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
     }
@@ -134,9 +141,31 @@ class RebalancerTest {
     void varianceRoundsDownToZeroShares() {
         List<Position> positions = List.of(new Position("A", 20.0001, 20, 1000));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+
         assertEquals(0.0, TestUtil.findBySymbol(result, "A").getShares());
         assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
     }
 
-    //
+    //Test 11 - Multiple valid securities plus one with an invalid price
+    @Test
+    void multipleValidSecuritiesPlusOneInvalidPrice() {
+        List<Position> positions = List.of(
+                new Position("A", 20, 10, 150),
+                new Position("B", 20, 20, 90),
+                new Position("C", 20, 10, 0)
+        );
+
+        assertThrows(IllegalArgumentException.class,
+                () -> Rebalancer.rebalance(100000, positions));
+    }
+
+    //Test 12 - total asset is negative
+    @Test
+    void negativeTotalAsset() {
+        List<Position> positions = List.of(new Position("A", 20, 10, 100));
+        assertThrows(IllegalArgumentException.class,
+                () -> Rebalancer.rebalance(-100000, positions));
+    }
+
+    //Test 13 -
 }
