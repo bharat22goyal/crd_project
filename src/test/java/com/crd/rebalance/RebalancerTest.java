@@ -60,5 +60,32 @@ class RebalancerTest {
         assertEquals("BUY", result.get(0).getAction());
     }
 
+    //Test 4 : Large total asset value across a mixed over/under/on-target portfolio
+    @Test
+    void largeTotalAssetValueAcrossPortfolio() {
+        List<Position> positions = List.of(
+                new Position("A", 30, 15, 150),
+                new Position("B", 10, 10, 90),
+                new Position("C", 15, 30, 220),
+                new Position("D", 25, 25, 450),
+                new Position("E", 20, 20, 70)
+        );
 
+        List<RebalanceResult> result = Rebalancer.rebalance(1000000000, positions);
+
+        assertEquals(1000000, TestUtil.findBySymbol(result, "A").getShares(), 0.01);
+        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
+
+        assertEquals(-681818.18, TestUtil.findBySymbol(result, "C").getShares(), 0.01);
+        assertEquals("SELL", TestUtil.findBySymbol(result, "C").getAction());
+
+        assertEquals(0, TestUtil.findBySymbol(result, "B").getShares());
+        assertEquals("HOLD", TestUtil.findBySymbol(result, "B").getAction());
+
+        assertEquals(0, TestUtil.findBySymbol(result, "D").getShares());
+        assertEquals("HOLD", TestUtil.findBySymbol(result, "D").getAction());
+
+        assertEquals(0, TestUtil.findBySymbol(result, "E").getShares());
+        assertEquals("HOLD", TestUtil.findBySymbol(result, "E").getAction());
+    }
 }
