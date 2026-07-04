@@ -167,5 +167,22 @@ class RebalancerTest {
                 () -> Rebalancer.rebalance(-100000, positions));
     }
 
-    //Test 13 -
+    //Test 13 - target percent outside 0 to 100
+    @ParameterizedTest
+    @ValueSource(doubles = {-5, 150})
+    void targetPercentOutsideZeroTo100(double targetPct) {
+        List<Position> positions = List.of(new Position("A", targetPct, 10, 100));
+        assertThrows(IllegalArgumentException.class,
+                () -> Rebalancer.rebalance(100000, positions));
+    }
+
+    //Test 14 - current percent outside 0 to 100
+    @ParameterizedTest
+    @ValueSource(doubles = {-5, 150})
+    void currentPercentOutsideZeroTo100(double currentPct) {
+        List<Position> positions = List.of(new Position("A", 20, currentPct, 100));
+        assertThrows(IllegalArgumentException.class,
+                () -> Rebalancer.rebalance(100000, positions));
+    }
+
 }
