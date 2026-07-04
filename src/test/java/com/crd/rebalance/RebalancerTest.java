@@ -120,6 +120,13 @@ class RebalancerTest {
         assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
     }
 
-
+    //Test 9 zero total asset
+    @Test
+    void zeroTotalAssetAccountNotYetVested() {
+        List<Position> positions = List.of(new Position("A", 20, 0, 100));
+        List<RebalanceResult> result = Rebalancer.rebalance(0, positions);
+        assertEquals(0, TestUtil.findBySymbol(result, "A").getShares());
+        assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
+    }
 
 }
