@@ -111,5 +111,15 @@ class RebalancerTest {
         assertEquals("SELL", TestUtil.findBySymbol(result, "A").getAction());
     }
 
-    
+    //Test 8 - decimal unit price
+    @Test
+    void nonRoundUnitPrice() {
+        List<Position> positions = List.of(new Position("A", 20, 10, 137.53));
+        List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+        assertEquals(72.71, TestUtil.findBySymbol(result, "A").getShares() , 0.01);
+        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
+    }
+
+
+
 }
