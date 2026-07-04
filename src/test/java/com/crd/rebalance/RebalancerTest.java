@@ -102,5 +102,14 @@ class RebalancerTest {
                 () -> Rebalancer.rebalance(100000, positions));
     }
 
+    //Test 7 - current position 100 percent but taget is 0
+    @Test
+    void currentPosition100PercentButTargetIsZero() {
+        List<Position> positions = List.of(new Position("A", 0, 100, 50));
+        List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+        assertEquals(-2000.0, TestUtil.findBySymbol(result, "A").getShares());
+        assertEquals("SELL", TestUtil.findBySymbol(result, "A").getAction());
+    }
 
+    
 }
