@@ -50,7 +50,7 @@ class RebalancerTest {
 
     //Test 3 One security holding 0% - it should buy
     @Test
-    void OneShareHoldingZeroPercent() {
+    void oneShareHoldingZeroPercent() {
         List<Position> positions = List.of(new Position("A", 100, 0, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(200000, positions);
 
