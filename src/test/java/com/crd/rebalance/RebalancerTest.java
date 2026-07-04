@@ -185,4 +185,10 @@ class RebalancerTest {
                 () -> Rebalancer.rebalance(100000, positions));
     }
 
+    //test 15 - empty list
+    @Test
+    void emptyPositionList() {
+        List<RebalanceResult> result = Rebalancer.rebalance(100000, List.of());
+        assertEquals(0, result.size());
+    }
 }
