@@ -1,9 +1,13 @@
 package com.crd.rebalance;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RebalancerTest {
 
@@ -87,6 +91,15 @@ class RebalancerTest {
 
         assertEquals(0, TestUtil.findBySymbol(result, "E").getShares());
         assertEquals("HOLD", TestUtil.findBySymbol(result, "E").getAction());
+    }
+
+    // Test 5 and 6 Zero/negative unit price must be rejected
+    @ParameterizedTest
+    @ValueSource(doubles = {0, -10})
+    void zeroOrNegativeUnitPriceMustBeRejected(double price) {
+        List<Position> positions = List.of(new Position("A", 20, 10, price));
+        assertThrows(IllegalArgumentException.class,
+                () -> Rebalancer.rebalance(100000, positions));
     }
 
 
