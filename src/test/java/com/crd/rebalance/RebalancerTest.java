@@ -35,4 +35,20 @@ class RebalancerTest {
         assertEquals(0.0, TestUtil.findBySymbol(result, "HD").getShares());
         assertEquals("HOLD", TestUtil.findBySymbol(result, "HD").getAction());
     }
+
+    //Test-2 : Current % already equals target % across portfolio
+    @Test
+    void currentPercentEqualsTargetPercentAcrossPortfolio() {
+        List<Position> positions = List.of(
+                new Position("X", 20, 20, 100),
+                new Position("Y", 30, 30, 50),
+                new Position("Z", 50, 50, 200)
+        );
+        List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
+        for (RebalanceResult r : result) {
+            assertEquals(0, r.getShares());
+            assertEquals("HOLD", r.getAction());
+        }
+    }
+
 }
