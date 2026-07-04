@@ -24,20 +24,11 @@ class RebalancerTest {
 
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
 
-        assertEquals(66.67, TestUtil.findBySymbol(result, "IBM").getShares(), 0.01);
-        assertEquals("BUY", TestUtil.findBySymbol(result, "IBM").getAction());
-
-        assertEquals(-45.45, TestUtil.findBySymbol(result, "ORCL").getShares(), 0.01);
-        assertEquals("SELL", TestUtil.findBySymbol(result, "ORCL").getAction());
-
-        assertEquals(0.0, TestUtil.findBySymbol(result, "MSFT").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "MSFT").getAction());
-
-        assertEquals(0.0, TestUtil.findBySymbol(result, "AAPL").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "AAPL").getAction());
-
-        assertEquals(0.0, TestUtil.findBySymbol(result, "HD").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "HD").getAction());
+        TestUtil.assertSharesAndAction(result, "IBM", 66.67, "BUY");
+        TestUtil.assertSharesAndAction(result, "ORCL", -45.45, "SELL");
+        TestUtil.assertSharesAndAction(result, "MSFT", 0, "HOLD");
+        TestUtil.assertSharesAndAction(result, "AAPL", 0, "HOLD");
+        TestUtil.assertSharesAndAction(result, "HD", 0, "HOLD");
     }
 
     //Test-2 : Current % already equals target % across portfolio
@@ -63,8 +54,7 @@ class RebalancerTest {
         List<Position> positions = List.of(new Position("A", 100, 0, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(200000, positions);
 
-        assertEquals(4000.0, TestUtil.findBySymbol(result, "A").getShares());
-        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
+        TestUtil.assertSharesAndAction(result, "A", 4000, "BUY");
     }
 
     //Test 4 : Large total asset value across a mixed over/under/on-target portfolio
@@ -80,20 +70,11 @@ class RebalancerTest {
 
         List<RebalanceResult> result = Rebalancer.rebalance(1000000000, positions);
 
-        assertEquals(1000000, TestUtil.findBySymbol(result, "A").getShares(), 0.01);
-        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
-
-        assertEquals(-681818.18, TestUtil.findBySymbol(result, "C").getShares(), 0.01);
-        assertEquals("SELL", TestUtil.findBySymbol(result, "C").getAction());
-
-        assertEquals(0, TestUtil.findBySymbol(result, "B").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "B").getAction());
-
-        assertEquals(0, TestUtil.findBySymbol(result, "D").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "D").getAction());
-
-        assertEquals(0, TestUtil.findBySymbol(result, "E").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "E").getAction());
+        TestUtil.assertSharesAndAction(result, "A", 1000000, "BUY");
+        TestUtil.assertSharesAndAction(result, "C", -681818.18, "SELL");
+        TestUtil.assertSharesAndAction(result, "B", 0, "HOLD");
+        TestUtil.assertSharesAndAction(result, "D", 0, "HOLD");
+        TestUtil.assertSharesAndAction(result, "E", 0, "HOLD");
     }
 
     // Test 5 and 6 Zero/negative unit price must be rejected
@@ -112,8 +93,7 @@ class RebalancerTest {
         List<Position> positions = List.of(new Position("A", 0, 100, 50));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
 
-        assertEquals(-2000.0, TestUtil.findBySymbol(result, "A").getShares());
-        assertEquals("SELL", TestUtil.findBySymbol(result, "A").getAction());
+        TestUtil.assertSharesAndAction(result, "A", -2000, "SELL");
     }
 
     //Test 8 - decimal unit price
@@ -122,8 +102,7 @@ class RebalancerTest {
         List<Position> positions = List.of(new Position("A", 20, 10, 137.53));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
 
-        assertEquals(72.71, TestUtil.findBySymbol(result, "A").getShares() , 0.01);
-        assertEquals("BUY", TestUtil.findBySymbol(result, "A").getAction());
+        TestUtil.assertSharesAndAction(result, "A", 72.71, "BUY");
     }
 
     //Test 9 zero total asset
@@ -132,8 +111,7 @@ class RebalancerTest {
         List<Position> positions = List.of(new Position("A", 20, 0, 100));
         List<RebalanceResult> result = Rebalancer.rebalance(0, positions);
 
-        assertEquals(0, TestUtil.findBySymbol(result, "A").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
+        TestUtil.assertSharesAndAction(result, "A", 0, "HOLD");
     }
 
     //Test 10 - very small variance that it round downs to zero
@@ -142,8 +120,7 @@ class RebalancerTest {
         List<Position> positions = List.of(new Position("A", 20.0001, 20, 1000));
         List<RebalanceResult> result = Rebalancer.rebalance(100000, positions);
 
-        assertEquals(0.0, TestUtil.findBySymbol(result, "A").getShares());
-        assertEquals("HOLD", TestUtil.findBySymbol(result, "A").getAction());
+        TestUtil.assertSharesAndAction(result, "A", 0, "HOLD");
     }
 
     //Test 11 - Multiple valid securities plus one with an invalid price
